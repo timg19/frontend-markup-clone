@@ -1,0 +1,9 @@
+h3 {
+  color: red
+}
+
+p{
+  border-color: red;
+  border-width: 1px;
+  border-style: solid;
+}
