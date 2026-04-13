@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="tei2html" default="build">
+    <property name="source.dir" value="./data/editions"/>
+    <property name="target.dir" value="./html"/>
+    <property name="stylesheet" value="./xslt/basic.xsl"/>
+    <property name="saxon.dir" value="${basedir}/saxon"/>
+    <property name="saxon.jar" value="${saxon.dir}/saxon9he.jar"/>
+    <property name="saxon.zip" value="${saxon.dir}/download.zip"/>
+    <property name="saxon.url" value="https://sourceforge.net/projects/saxon/files/Saxon-HE/9.9/SaxonHE9-9-1-7J.zip/download"/>
+
+    <target name="check-saxon">
+        <mkdir dir="${saxon.dir}"/>
+        <available file="${saxon.jar}" property="saxon.present"/>
+    </target>
+
+    <target name="download-saxon" depends="check-saxon" unless="saxon.present">
+        <echo message="Lade Saxon-Archiv nach ${saxon.zip} herunter ..."/>
+        <get src="${saxon.url}" dest="${saxon.zip}" usetimestamp="true"/>
+        <unzip src="${saxon.zip}" dest="${saxon.dir}" overwrite="false"/>
+        <delete file="${saxon.zip}"/>
+    </target>
+
+    <target name="build" depends="download-saxon">
+        <mkdir dir="${target.dir}"/>
+        <xslt style="${stylesheet}" basedir="${source.dir}" destdir="${target.dir}" includes="*.xml" extension=".html">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath location="${saxon.jar}"/>
+        </xslt>
+    </target>
+</project>
